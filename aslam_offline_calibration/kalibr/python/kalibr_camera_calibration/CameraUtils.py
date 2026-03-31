@@ -331,14 +331,16 @@ def saveChainParametersYaml(cself, resultFile, graph):
                     acvb.Omni: 'omni',
                     acvb.DistortedOmni: 'omni',
                     acvb.ExtendedUnified: 'eucm',
-                    acvb.DoubleSphere: 'ds'}
+                    acvb.DoubleSphere: 'ds',
+                    acvb.Ocam: 'ocam'}
     distortionModels = {acvb.DistortedPinhole: 'radtan',
                         acvb.EquidistantPinhole: 'equidistant',
                         acvb.FovPinhole: 'fov',
                         acvb.Omni: 'none',
                         acvb.DistortedOmni: 'radtan',
                         acvb.ExtendedUnified: 'none',
-                        acvb.DoubleSphere: 'none'}
+                        acvb.DoubleSphere: 'none',
+                        acvb.Ocam: 'none'}
 
     chain = cr.CameraChainParameters(resultFile, createYaml=True)
     for cam_id, cam in enumerate(cself.cameras):
@@ -359,6 +361,15 @@ def saveChainParametersYaml(cself, resultFile, graph):
             camParams.setIntrinsics(cameraModel, [P.alpha(), P.beta(), P.fu(), P.fv(), P.cu(), P.cv()] )
         elif cameraModel == 'ds':
             camParams.setIntrinsics(cameraModel, [P.xi(), P.alpha(), P.fu(), P.fv(), P.cu(), P.cv()] )
+        elif cameraModel == 'ocam':
+            # Ocam: [cx, cy, c, d, e, w2c_len, c2w_len, w2c_coeffs..., c2w_coeffs...]
+            w2c_coeffs = P.world2camCoeffs()
+            c2w_coeffs = P.cam2worldCoeffs()
+            intrinsics = [P.cx(), P.cy(), P.c(), P.d(), P.e(),
+                         len(w2c_coeffs), len(c2w_coeffs)]
+            intrinsics.extend(w2c_coeffs)
+            intrinsics.extend(c2w_coeffs)
+            camParams.setIntrinsics(cameraModel, intrinsics)
         else:
             raise RuntimeError("Invalid camera model {}.".format(cameraModel))
         camParams.setResolution( [P.ru(), P.rv()] )

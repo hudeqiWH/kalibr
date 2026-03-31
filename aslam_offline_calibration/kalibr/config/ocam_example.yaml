@@ -1,0 +1,22 @@
+# Ocam camera configuration example for Kalibr
+# This file shows how to configure an Ocam camera for calibration
+
+cam0:
+  camera_model: ocam
+  # intrinsics: [cx, cy, c, d, e, w2c_len, c2w_len, w2c_coeffs..., c2w_coeffs...]
+  # Based on park_front.json example:
+  # cx=961.44, cy=764.67, c=0.99888, d=0.00048, e=-0.00079
+  # world2cam: 12 coefficients, cam2world: 5 coefficients
+  intrinsics: [961.44189453125, 764.6656494140625, 0.9988817572593689, 0.00048447417793795466, -0.000787204597145319, 12, 5, 829.33251953125, 637.10107421875, 51.23870849609375, 58.38129425048828, 80.20258331298828, -4.643816947937012, 10.809462547302246, 51.23932647705078, 3.196411371231079, -35.826011657714844, -21.63343048095703, -3.894087314605713, -414.9294128417969, 0.0, 0.0003165224625263363, 2.5380396095897595e-07, 1.1088343437881676e-10]
+  distortion_model: none
+  distortion_coeffs: []
+  resolution: [1920, 1536]
+  rostopic: /camera/image_raw
+
+# Target configuration
+target:
+  type: checkerboard
+  rows: 6
+  cols: 7
+  row_spacing: 0.06  # meters
+  col_spacing: 0.06  # meters

@@ -3,6 +3,7 @@
 #include <aslam/cameras/OmniProjection.hpp>
 #include <aslam/cameras/ExtendedUnifiedProjection.hpp>
 #include <aslam/cameras/DoubleSphereProjection.hpp>
+#include <aslam/cameras/OcamProjection.hpp>
 #include <aslam/cameras/NoDistortion.hpp>
 #include <aslam/cameras/EquidistantDistortion.hpp>
 #include <aslam/cameras/FovDistortion.hpp>
@@ -383,6 +384,50 @@ void exportDoubleSphereProjection(std::string name) {
 }
 
 template<typename D>
+void exportOcamProjection(std::string name) {
+
+  D & (OcamProjection<D>::*ocamdistortion)() = &OcamProjection<D>::distortion;
+
+  class_<OcamProjection<D>, boost::shared_ptr<OcamProjection<D> > > ocamProjection(
+      name.c_str(), init<>());
+  sm::python::unique_register_ptr_to_python<boost::shared_ptr<OcamProjection<D> > >();
+
+  ocamProjection.def(init<>((name + "(distortion_t distortion)").c_str()))
+      .def(
+      init<double, double, double, double, double, std::vector<double>, std::vector<double>, int, int, D>(
+          (name
+              + "(double cx, double cy, double c, double d, double e, world2cam_coeffs, cam2world_coeffs, int resolutionU, int resolutionV, distortion_t distortion)")
+              .c_str()))
+      .def(
+      init<double, double, double, double, double, std::vector<double>, std::vector<double>, int, int>(
+          (name
+              + "(double cx, double cy, double c, double d, double e, world2cam_coeffs, cam2world_coeffs, int resolutionU, int resolutionV)")
+              .c_str()))
+  /// \brief The horizontal image center in pixels.
+      .def("cx", &OcamProjection<D>::cx)
+  /// \brief The vertical image center in pixels.
+      .def("cy", &OcamProjection<D>::cy)
+  /// \brief The affine parameter c.
+      .def("c", &OcamProjection<D>::c)
+  /// \brief The affine parameter d.
+      .def("d", &OcamProjection<D>::d)
+  /// \brief The affine parameter e.
+      .def("e", &OcamProjection<D>::e)
+  /// \brief The horizontal resolution in pixels.
+      .def("ru", &OcamProjection<D>::ru)
+  /// \brief The vertical resolution in pixels.
+      .def("rv", &OcamProjection<D>::rv)
+  /// \brief Get world2cam polynomial coefficients.
+      .def("world2camCoeffs", &OcamProjection<D>::world2camCoeffs, return_value_policy<copy_const_reference>())
+  /// \brief Get cam2world polynomial coefficients.
+      .def("cam2worldCoeffs", &OcamProjection<D>::cam2worldCoeffs, return_value_policy<copy_const_reference>())
+      .def("distortion", ocamdistortion, return_internal_reference<>())
+      .def("setDistortion", &OcamProjection<D>::setDistortion)
+      .def_pickle(sm::python::pickle_suite<OcamProjection<D> >());
+  exportGenericProjectionFunctions<OcamProjection<D> >(ocamProjection);
+}
+
+template<typename D>
 void exportPinholeProjection(std::string name) {
 
   typename PinholeProjection<D>::distortion_t & (PinholeProjection<D>::*distortion1)() = &PinholeProjection<D>::distortion;
@@ -464,6 +509,7 @@ void exportCameraProjections() {
 
   exportDoubleSphereProjection<NoDistortion>("DoubleSphereProjection");
 
+  exportOcamProjection<NoDistortion>("OcamProjection");
 
   // distortion:
   // exportAPrioriInformationError<aslam::backend::DesignVariableAdapter< RadialTangentialDistortion > >("RadialTangentialDistortionAPrioriInformationError");

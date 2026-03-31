@@ -188,6 +188,8 @@ void exportFrame() {
 
   aslam::python::exportFrame<DoubleSphereCameraGeometry>("DoubleSphereFrame");
 
+  aslam::python::exportFrame<OcamCameraGeometry>("OcamFrame");
+
   aslam::python::exportFrame<OmniCameraGeometry>("OmniFrame");
   aslam::python::exportFrame<DistortedOmniCameraGeometry>("DistortedOmniFrame");
   aslam::python::exportFrame<MaskedDistortedOmniCameraGeometry>(

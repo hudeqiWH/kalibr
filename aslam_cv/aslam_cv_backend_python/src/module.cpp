@@ -5,6 +5,7 @@
 #include <aslam/ExportCameraDesignVariable.hpp>
 #include <aslam/cameras/PinholeProjection.hpp>
 #include <aslam/cameras/OmniProjection.hpp>
+#include <aslam/cameras/OcamProjection.hpp>
 #include <aslam/cameras/NoDistortion.hpp>
 #include <aslam/cameras/RadialTangentialDistortion.hpp>
 #include <aslam/cameras/EquidistantDistortion.hpp>
@@ -41,6 +42,9 @@ BOOST_PYTHON_MODULE(libaslam_cv_backend_python)
 
   aslam::python::exportReprojectionErrors<ExtendedUnifiedCameraGeometry>("ExtendedUnified");
   aslam::python::exportReprojectionErrors<DoubleSphereCameraGeometry>("DoubleSphere");
+
+  aslam::python::exportReprojectionErrors<OcamCameraGeometry>("Ocam");
+  aslam::python::exportReprojectionErrors<OcamRsCameraGeometry>("OcamRs");
 
   aslam::python::exportReprojectionErrors<OmniCameraGeometry>("Omni");
   aslam::python::exportReprojectionErrors<OmniRsCameraGeometry>("OmniRs");
@@ -79,6 +83,9 @@ BOOST_PYTHON_MODULE(libaslam_cv_backend_python)
 
   exportCameraDesignVariables<ExtendedUnifiedCameraGeometry>("ExtendedUnifiedCameraGeometry");
   exportCameraDesignVariables<DoubleSphereCameraGeometry>("DoubleSphereCameraGeometry");
+
+  exportCameraDesignVariables<OcamCameraGeometry>("OcamCameraGeometry");
+  exportCameraDesignVariables<OcamRsCameraGeometry>("OcamRsCameraGeometry");
 
   exportCameraDesignVariables<OmniCameraGeometry>("OmniCameraGeometry");
   exportCameraDesignVariables<DistortedOmniCameraGeometry>("DistortedOmniCameraGeometry");
@@ -123,6 +130,7 @@ BOOST_PYTHON_MODULE(libaslam_cv_backend_python)
 
   exportGenericProjectionDesignVariable< ExtendedUnifiedProjection<NoDistortion> >("ExtendedUnifiedProjection");
   exportGenericProjectionDesignVariable< DoubleSphereProjection<NoDistortion> >("DoubleSphereProjection");
+  exportGenericProjectionDesignVariable< OcamProjection<NoDistortion> >("OcamProjection");
 
   exportGenericProjectionDesignVariable< OmniProjection<NoDistortion> >("OmniProjection");
   exportGenericProjectionDesignVariable< OmniProjection<RadialTangentialDistortion> >("DistortedOmniProjection");

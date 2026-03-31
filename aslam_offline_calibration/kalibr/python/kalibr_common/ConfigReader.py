@@ -167,6 +167,32 @@ class AslamCamera(object):
             else:
                 raise RuntimeError("camera model {} does not support distortion model '{}'".format(camera_model, dist_model))
 
+        elif camera_model == 'ocam':
+            # Ocam model: [cx, cy, c, d, e, w2c_len, c2w_len, w2c_coeffs..., c2w_coeffs...]
+            cx = intrinsics[0]
+            cy = intrinsics[1]
+            c = intrinsics[2]
+            d = intrinsics[3]
+            e = intrinsics[4]
+            w2c_len = int(intrinsics[5])
+            c2w_len = int(intrinsics[6])
+            
+            world2cam_coeffs = intrinsics[7:7+w2c_len]
+            cam2world_coeffs = intrinsics[7+w2c_len:7+w2c_len+c2w_len]
+
+            if dist_model == 'none':
+                proj = cv.OcamProjection(cx, cy, c, d, e,
+                                         world2cam_coeffs, cam2world_coeffs,
+                                         resolution[0], resolution[1])
+
+                self.geometry = cv.OcamCameraGeometry(proj)
+                
+                self.frameType = cv.OcamFrame
+                self.keypointType = cv.Keypoint2
+                self.reprojectionErrorType = cvb.OcamReprojectionErrorSimple
+            else:
+                raise RuntimeError("camera model {} does not support distortion model '{}'".format(camera_model, dist_model))
+
         else:
             raise RuntimeError("Unknown camera model '{}'".format(camera_model))
         
@@ -261,7 +287,8 @@ class CameraParameters(ParametersBase):
         cameraModels = ['pinhole', 
                         'omni',
                         'eucm',
-                        'ds']
+                        'ds',
+                        'ocam']
         
         if model not in cameraModels:
             self.raiseError("Unknown camera model '{}'; available models: {}.".format(model, ", ".join(cameraModels)) )
@@ -312,6 +339,23 @@ class CameraParameters(ParametersBase):
 
             if beta_eucm < 0:
                 self.raiseError("invalid beta_eucm of {} (beta>=0)".format(beta_eucm) )
+
+        elif model == 'ocam':
+            # Ocam: [cx, cy, c, d, e, w2c_len, c2w_len, w2c_coeffs..., c2w_coeffs...]
+            if len(intrinsics) < 8:
+                self.raiseError("invalid intrinsics for ocam; should be [cx, cy, c, d, e, w2c_len, c2w_len, w2c_coeffs..., c2w_coeffs...], but got {} parameters".format(len(intrinsics)))
+            
+            cx = intrinsics[0]
+            cy = intrinsics[1]
+            w2c_len = int(intrinsics[5])
+            c2w_len = int(intrinsics[6])
+            
+            expected_len = 7 + w2c_len + c2w_len
+            if len(intrinsics) != expected_len:
+                self.raiseError("invalid intrinsics length for ocam; expected {} parameters (with w2c_len={}, c2w_len={}), but got {}".format(expected_len, w2c_len, c2w_len, len(intrinsics)))
+            
+            focalLength = [1000.0, 1000.0]  # Dummy for Ocam
+            principalPoint = [cx, cy]
 
         else:
             self.raiseError('internal error: invalid camera model {} (should have been checked before)'.format(model))

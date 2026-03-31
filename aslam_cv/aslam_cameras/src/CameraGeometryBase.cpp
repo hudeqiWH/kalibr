@@ -52,6 +52,22 @@ boost::shared_ptr<CameraGeometryBase> CameraGeometryBase::create(
     rval.reset(
         new CameraGeometry<DoubleSphereProjection<NoDistortion>, GlobalShutter, NoMask>(
             config));
+  } else if (type == "Ocam") {
+    rval.reset(
+        new CameraGeometry<OcamProjection<NoDistortion>, GlobalShutter, NoMask>(
+            config));
+  } else if (type == "OcamRs") {
+    rval.reset(
+        new CameraGeometry<OcamProjection<NoDistortion>, RollingShutter, NoMask>(
+            config));
+  } else if (type == "MaskedOcam") {
+    rval.reset(
+        new CameraGeometry<OcamProjection<NoDistortion>, GlobalShutter, ImageMask>(
+            config));
+  } else if (type == "MaskedOcamRs") {
+    rval.reset(
+        new CameraGeometry<OcamProjection<NoDistortion>, RollingShutter, ImageMask>(
+            config));
   } else if (type == "PinholeRs") {
     rval.reset(
         new CameraGeometry<PinholeProjection<NoDistortion>, RollingShutter,

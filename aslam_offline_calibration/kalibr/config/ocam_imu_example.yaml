@@ -1,0 +1,60 @@
+# Ocam Camera + IMU Calibration Configuration Example for Kalibr
+# This file demonstrates how to configure an Ocam camera with IMU for calibration
+
+cam0:
+  camera_model: ocam
+  # intrinsics: [cx, cy, c, d, e, w2c_len, c2w_len, w2c_coeffs..., c2w_coeffs...]
+  intrinsics: [
+    961.44189453125,      # cx
+    764.6656494140625,    # cy
+    0.9988817572593689,   # c (affine)
+    0.00048447417793795466, # d (affine)
+    -0.000787204597145319,  # e (affine)
+    12,                   # world2cam polynomial length
+    5,                    # cam2world polynomial length
+    # world2cam coefficients
+    829.33251953125, 637.10107421875, 51.23870849609375, 58.38129425048828,
+    80.20258331298828, -4.643816947937012, 10.809462547302246, 51.23932647705078,
+    3.196411371231079, -35.826011657714844, -21.63343048095703, -3.894087314605713,
+    # cam2world coefficients
+    -414.9294128417969, 0.0, 0.0003165224625263363, 2.5380396095897595e-07, 1.1088343437881676e-10
+  ]
+  distortion_model: none
+  distortion_coeffs: []
+  resolution: [1920, 1536]
+  rostopic: /camera/image_raw
+
+# IMU configuration
+imu0:
+  rostopic: /imu/data
+  update_rate: 200.0  # Hz
+  
+  # Accelerometer
+  accelerometer_noise_density: 0.01  # m/s^2/sqrt(Hz)
+  accelerometer_random_walk: 0.0002  # m/s^3/sqrt(Hz)
+  
+  # Gyroscope
+  gyroscope_noise_density: 0.005  # rad/s/sqrt(Hz)
+  gyroscope_random_walk: 0.0001   # rad/s^2/sqrt(Hz)
+
+# Target configuration
+target:
+  type: checkerboard
+  rows: 6
+  cols: 7
+  row_spacing: 0.06  # meters
+  col_spacing: 0.06  # meters
+
+# Calibration options
+calibration:
+  # Time offset between camera and IMU (initial guess)
+  time_offset_cam_imu: 0.0  # seconds
+  
+  # Whether to estimate time offset
+  estimate_time_offset: true
+  
+  # Optimization options
+  max_iterations: 30
+  
+  # Output file
+  output_file: camchain-imucam.yaml

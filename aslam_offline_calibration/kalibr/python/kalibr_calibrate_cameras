@@ -37,7 +37,8 @@ cameraModels = { 'pinhole-radtan': acvb.DistortedPinhole,
                  'omni-none':      acvb.Omni,
                  'omni-radtan':    acvb.DistortedOmni,
                  'eucm-none':      acvb.ExtendedUnified,
-                 'ds-none':        acvb.DoubleSphere}
+                 'ds-none':        acvb.DoubleSphere,
+                 'ocam-none':      acvb.Ocam}
 
 def signal_exit(signal, frame):
     sm.logWarn("Shutdown requested! (CTRL+C)")

@@ -118,6 +118,11 @@ void exportCameraGeometries() {
 
   exportCameraGeometry<DoubleSphereCameraGeometry>("DoubleSphereCameraGeometry");
 
+  exportCameraGeometry<OcamCameraGeometry>("OcamCameraGeometry");
+  exportCameraGeometry<OcamRsCameraGeometry>("OcamRsCameraGeometry");
+  exportCameraGeometry<MaskedOcamCameraGeometry>("MaskedOcamCameraGeometry");
+  exportCameraGeometry<MaskedOcamRsCameraGeometry>("MaskedOcamRsCameraGeometry");
+
   exportCameraGeometry<OmniCameraGeometry>("OmniCameraGeometry");
   exportCameraGeometry<DistortedOmniCameraGeometry>(
       "DistortedOmniCameraGeometry");
